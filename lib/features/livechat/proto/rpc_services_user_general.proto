@@ -1,0 +1,52 @@
+syntax="proto3";
+
+package pb;
+
+import "message_user.proto";
+import "message_livechat.proto";
+
+option go_package="github.com/innovay-software/inno16_livechat/pb";
+
+message UserGeneralRequest{
+    // Feature1: Login - client initialited - server responds
+    bool is_login = 1;
+
+    // Feature2: UpsertGroup - insert or update group
+    bool is_upsert_group = 2;
+    string upsert_group_id = 3;
+    string upsert_group_id_client = 4;
+    string upsert_group_name = 5;
+    bool upsert_group_is_group_chat = 6;
+    repeated string upsert_group_member_uuids = 7;
+
+    // Feature3: SendMessage - client initiated
+    bool is_send_message = 8;
+    string send_message_group_id = 9;
+    string send_message_content = 10;
+    string send_message_type = 11;
+
+    // Feature4: RewordMessage - client initiated
+    bool is_reword_message = 12;
+    string reword_message_content = 13;
+}
+
+message UserGeneralResponse{
+    // Feature1: Login, get user details, friends, and groups belonged to
+    bool is_login = 1;
+    User user = 2;
+    repeated User friends = 3;
+    repeated LivechatGroup groups = 4;
+
+    // Feature2: UpsertGroup
+    bool is_upsert_group = 5;
+    LivechatGroup new_group = 6;
+    string new_group_client_id = 7;
+
+    // Feature3: DistributeMessage - server initiated
+    bool is_new_message = 8;
+    LivechatMessage new_message = 9;
+
+    // Feature4: DistributeRewordMessage - server initiated
+    bool is_reword_message = 10;
+    LivechatMessage reword_message = 11;
+}

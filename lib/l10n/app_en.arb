@@ -1,0 +1,161 @@
+{
+  "accounts": "Accounts",
+  "adminOnly": "Admin Only",
+  "albumFileCount": "{num} files",
+  "@albumFileCount": {
+    "placeholder": {
+      "num": {
+        "type": "int"
+      }
+    }
+  },
+  "albumType": "Album Type",
+  "albumTypeBaby": "Baby Album",
+  "albumTypeNormal": "Normal Album",
+  "allFilesUploaded": "All files uploaded",
+  "babyNickName": "Baby Nickname",
+  "birthdate": "Baby Birthdate",
+  "cache": "Cache",
+  "canUploadNumberFiles": "Can upload {num} file(s)",
+  "@canUploadNumberFiles": {
+    "placeholder": {
+      "num": {
+        "type": "int"
+      }
+    }
+  },
+  "cancel": "Cancel",
+  "cannotConnectToBackendServer": "Cannot connect to server, retrying...",
+  "cannotOpenUrl": "Cannot open url, please try again later",
+  "chatHistory": "Chat History",
+  "clearAllCache": "Clear All Cache",
+  "confirm": "Confirm",
+  "connectedToLocationServer": "Connected to {location}",
+  "@connectedToLocationServer": {
+    "placeholder": {
+      "location": {
+        "type": "string"
+      }
+    }
+  },
+  "connectedToLocationServerFailed": "Cannot connect to {location} servers",
+  "@connectedToLocationServerFailed": {
+    "placeholder": {
+      "location": {
+        "type": "string"
+      }
+    }
+  },
+  "connectingToLocationServer": "Trying to connect to {location} servers...",
+  "@connectingToLocationServer": {
+    "placeholder": {
+      "location": {
+        "type": "string"
+      }
+    }
+  },
+  "coverImage": "Cover Image",
+  "daysAgo": "{num} days ago",
+  "@daysAgo": {
+    "placeholder": {
+      "num": {
+        "type": "int"
+      }
+    }
+  },
+  "delete": "Delete",
+  "deleteConfirmationTitle": "Are you sure you want to delete this item?",
+  "deleteFailed": "Cannot delete this item",
+  "deleteWontRecover": "Won't be able to recover after deletion",
+  "didNotSelectFiles": "No files selected",
+  "endDate": "End Date",
+  "exitConfirmationTitle": "Are you sure you want to exit?",
+  "filePickLimitExceeded": "Cannot select more than {num} files",
+  "@filePickLimitExceeded": {
+    "placeholder": {
+      "num": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgo": "{num} hours ago",
+  "@hoursAgo": {
+    "placeholder": {
+      "num": {
+        "type": "int"
+      }
+    }
+  },
+  "initialPassword": "Initial Password",
+  "invitees": "Invitees",
+  "itemCantBeEmpty": "{item} cannot be empty",
+  "@itemCantBeEmpty": {
+    "placeholder": {
+      "item": {
+        "type": "string"
+      }
+    }
+  },
+  "locker": "Locker",
+  "lockerPasscode": "Locker Passcode",
+  "loginNewAccount": "Login to new account",
+  "loginPassword": "Login Password",
+  "loginRequired": "Please log in",
+  "logoutConfirmationTitle": "Confirm Logout",
+  "mediaFileProcessing": "Media file is being processed...",
+  "medias": "Medias",
+  "member": "Member",
+  "members": "Members",
+  "mobile": "Mobile",
+  "mobileAndPasswordAreRequired": "Please enter mobile and password",
+  "name": "Name",
+  "namePasswordEtc": "Name, Password, etc",
+  "networkUnavailableRetryIn10Seconds": "Cannot connect to internet, retrying...",
+  "newAlbum": "Create a new album",
+  "newMember": "New Member",
+  "newNote": "New Note",
+  "noNewVersion": "No updates found",
+  "notes": "Notes",
+  "others": "Others",
+  "passwordLocker": "Locker pin must be a six digit number",
+  "passwordTooShort": "Password too short",
+  "passwordsDoNotMatch": "Passwords do not match",
+  "pleaseEnter": "Please Enter ",
+  "pleaseEnterContent": "Please enter content",
+  "pleaseEnterSecond": "Please re-enter content",
+  "pleaseSelect": "Please Select ",
+  "preview": "Preview",
+  "previewUnavailablePleaseDownload": "Preview is not available, please download it to open",
+  "processingInProgress": "Processing...",
+  "regionCA": "Canada",
+  "regionRemote": "Non-CA",
+  "regionClosest": "Based on location",
+  "reloginRequired": "Please re-login",
+  "role": "Role",
+  "search": "Search",
+  "selected": "Selected ",
+  "serviceLocation": "Service Location",
+  "settings": "Settings",
+  "settingsUpdated": "Settings updated",
+  "shareFile": "Share file",
+  "smartRefresherCanLoad": "Release to load more",
+  "smartRefresherFailed": "Loading failed, tap to retry",
+  "smartRefresherIdle": "Pull up to load more",
+  "smartRefresherNoMore": "No more contents",
+  "startDate": "Start Date",
+  "switchAccounts": "Switch Accounts",
+  "title": "Title",
+  "to": "To",
+  "updateAvailable": "New version found, update now?",
+  "updates": "Updates",
+  "uploading": "Uploading...",
+  "viewerUpload": "Invitee Upload",
+  "visibleByNumPeople": "Visible to {num} people",
+  "@visibleByNumPeople": {
+    "placeholder": {
+      "num": {
+        "type": "int"
+      }
+    }
+  }
+}

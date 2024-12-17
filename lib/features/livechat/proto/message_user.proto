@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package="github.com/innovay-software/inno16_livechat/pb";
+
+message User {
+    string id = 1;
+    string uuid = 2;
+    int32 family_id = 3;
+    string name = 4;
+    string email = 5;
+    string mobile = 6;
+    string avatar = 7;
+}
+
+message UserInGroup {
+    string name = 1;
+    string uuid = 2;
+    string avatar = 3;
+}

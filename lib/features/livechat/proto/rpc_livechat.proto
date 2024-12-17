@@ -1,0 +1,42 @@
+syntax="proto3";
+
+package pb;
+
+import "message_livechat.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package="github.com/innovay-software/inno16_livechat/pb";
+
+message SendMessageRequest{
+    string group_id = 1;
+    string content = 2;
+    string type = 3;
+}
+
+message GetLatestMessagesRequest {
+    string group_id = 1;
+    google.protobuf.Timestamp pivot_datetime = 2;
+}
+
+message GetLatestMessagesResponse {
+    repeated LivechatMessage messages = 1;
+}
+
+message CreateLivechatGroupRequest {
+    string title = 1;
+    repeated string members = 2;
+}
+
+message CreateLivechatGroupResponse {
+    LivechatGroup livechat_group = 1;
+}
+
+message UpdateLivechatGroupRequest {
+    string group_id = 1;
+    string title = 2;
+    repeated string members = 3;
+}
+
+message UpdateLivechatGroupResponse {
+    LivechatGroup livechat_group = 1;
+}

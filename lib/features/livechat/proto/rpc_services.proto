@@ -1,0 +1,25 @@
+syntax="proto3";
+
+package pb;
+
+import "message_livechat.proto";
+import "rpc_login.proto";
+import "rpc_livechat.proto";
+import "rpc_services_user_general.proto";
+
+option go_package="github.com/innovay-software/inno16_livechat/pb";
+
+message EmptyRequest {
+}
+
+service GrpcServerService {
+    // rpc SignUp(SignupRequestMessage) returns (SignupResponseMessage){};
+    rpc AccessTokenLogin(EmptyRequest) returns (AccessTokenLoginResponse) {};
+    rpc GetLatestMessages(GetLatestMessagesRequest) returns (GetLatestMessagesResponse) {};
+    rpc CreateLivechatGroup(CreateLivechatGroupRequest) returns (CreateLivechatGroupResponse) {};
+    rpc UpdateLivechatGroup(UpdateLivechatGroupRequest) returns (UpdateLivechatGroupResponse) {};
+
+    
+    rpc SendMessage(stream SendMessageRequest) returns (stream LivechatMessage) {};
+    rpc UserGeneral(stream UserGeneralRequest) returns (stream UserGeneralResponse) {};
+}

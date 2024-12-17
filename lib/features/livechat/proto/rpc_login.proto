@@ -1,0 +1,14 @@
+syntax="proto3";
+
+package pb;
+
+import "message_user.proto";
+import "message_livechat.proto";
+
+option go_package="github.com/innovay-software/inno16_livechat/pb";
+
+message AccessTokenLoginResponse{
+    User user = 1;
+    repeated User friends = 2;
+    repeated LivechatGroup groups = 3;
+}

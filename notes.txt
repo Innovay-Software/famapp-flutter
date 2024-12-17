@@ -1,0 +1,37 @@
+https://cdn.dribbble.com/users/1503026/screenshots/6990134/media/08c26c19458b6ba67b3f488b045c463b.png
+https://cdn.dribbble.com/users/4167412/screenshots/15909980/media/cae5b58ad9717c4fb63cb2bc45ac651a.png
+https://www.pinterest.ca/pin/1028791108605514587/visual-search/?x=10&y=10&w=544&h=403&cropSource=6&imageSignature=cc60a4259bfc04178484b36bb44847ee
+
+curl -F "file=@/Users/ealton/Work/GitLab/Innovay/inno_12babyphotos_flutter/builds/com.innovay.ijayden_1.8.15_20240226_1.ipa" \
+-F "uKey=9b9790a1ec6c67763c132537839fc73d" \
+-F "_api_key=d441f07d1cc9af3d17484a41caaba291" \
+--progress-bar \
+--verbose \
+http://www.pgyer.com/apiv1/app/upload
+
+
+i10n:
+flutter gen-l10n
+
+flutter build ipa --release --export-method development
+
+
+Simulator cache directory:
+/Users/ealton/Library/Developer/CoreSimulator/Devices/EE2AC83B-7DB3-4185-B37D-26521BA090F1/data/Containers/Data/Application/2D352BFD-713E-49BA-BCD7-08BC3E11424A/Library/Caches
+
+/Users/ealton/Library/Developer/CoreSimulator/Devices/EE2AC83B-7DB3-4185-B37D-26521BA090F1/data/Containers/Data/Application/2D352BFD-713E-49BA-BCD7-08BC3E11424A/Documents
+
+
+Proto Buff Code Generation:
+protoc --proto_path=lib/features/livechat/proto --dart_out=grpc:lib/features/livechat/pb lib/features/livechat/proto/*.proto google/protobuf/timestamp.proto
+
+
+
+#### LivechatGroup generation process:
+- Create a local LivechatGroup (groupId = "" and groupIdClient = RandomString)
+- Specify member UUIDs
+- Local livechatGroups are only passwd to backend to "create" when user opens the chat_detail page
+- Put local livechatGroup as the "currentLivechatGroup" param in LivechatViewmodel instance
+- Pass the request to backend server through gRPC stream,
+- Backend server replies back with a updated groupID and clientID, if the clientID matches with the value in LivechatViewmodel.currentLivechatGroup.clientId, than update it
+- otherwise, this groupId wasn't the one user wanted to create (maybe someone else created it, or it was from before)
