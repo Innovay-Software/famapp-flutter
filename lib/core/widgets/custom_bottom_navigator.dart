@@ -7,7 +7,6 @@ import '../../features/livechat/view/livechat_home_page.dart';
 import '../../features/settings/view/user_center_page.dart';
 import '../config.dart';
 import '../global_data.dart';
-import '../utils/common_utils.dart';
 import 'custom_bottom_navigation_bar.dart';
 
 class CustomBottomNavigator extends StatefulWidget {
@@ -33,10 +32,6 @@ class _CustomBottomNavigatorState extends State<CustomBottomNavigator> {
       viewportFraction: 1.0,
       keepPage: true,
     );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      CommonUtils.checkForNewVersion(context, '');
-    });
   }
 
   @override

@@ -1,18 +1,23 @@
-import 'package:either_dart/either.dart';
-
-import '../../../../core/errors/data_fetch_error.dart';
-import '../../../../core/utils/use_case_exception_handler.dart';
+import 'package:famapp/core/utils/api_utils.dart';
+import 'package:famapp/features/members/model/member_model.dart';
 import '../datasources/member_remote_datasource.dart';
-import 'params/delete_member_params.dart';
 
 class DeleteMember {
-  Future<Either<DataFetchError, void>> call({required DeleteMemberParams params}) async {
-    try {
-      final remoteDatasource = MemberRemoteDatasource();
-      final response = await remoteDatasource.deleteMember(params: params);
-      return Right(response);
-    } catch (e, stacktrace) {
-      return Left(UseCaseExceptionHandler.defaultHandler(e, stacktrace));
+  Future<ApiResponse> call({
+    required List<Member> members,
+    required String userUuid,
+  }) async {
+    final remoteDatasource = MemberRemoteDatasource();
+    final response = await remoteDatasource.deleteMember(userUuid: userUuid);
+    if (!response.successful) {
+      return response;
     }
+    for (var i = 0; i < members.length; i++) {
+      if (members[i].uuid == userUuid) {
+        members.removeAt(i);
+        break;
+      }
+    }
+    return response;
   }
 }

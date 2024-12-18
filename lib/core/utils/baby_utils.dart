@@ -1,5 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 class BabyUtils {
-  static String getBabyAgeText(DateTime birthDate, DateTime targetDate) {
+  static String getBabyAgeText(BuildContext ctx, DateTime birthDate, DateTime targetDate) {
     var diff = targetDate.difference(birthDate);
     switch (diff.inDays) {
       case 7:
@@ -21,7 +24,7 @@ class BabyUtils {
         months -= 1;
       } else {
         // var days = getDaysInMonth(targetDate.year, targetDate.month);
-        days += getDaysInMonth(targetDate.year, targetDate.month - 1);
+        days += _getDaysInMonth(targetDate.year, targetDate.month - 1);
         months -= 1;
       }
     }
@@ -55,7 +58,7 @@ class BabyUtils {
         return ['4 weeks', 'birthday-cake3.png'];
     }
 
-    if (diff.inDays == getDaysInMonth(birthDate.year, birthDate.month)) {
+    if (diff.inDays == _getDaysInMonth(birthDate.year, birthDate.month)) {
       return ['1 months', 'birthday-cake1.png'];
     }
 
@@ -77,12 +80,13 @@ class BabyUtils {
     return [];
   }
 
-  static int getDaysInMonth(int year, int month) {
+  // Get days in month. Month is indexed at 1
+  static int _getDaysInMonth(int year, int month) {
     if (month == DateTime.february) {
-      final bool isLeapYear = (year % 4 == 0) && (year % 100 != 0) || (year % 400 == 0);
+      final bool isLeapYear = (year % 100 == 0 && year % 400 == 0) || (year % 100 != 0 && year % 4 == 0);
       return isLeapYear ? 29 : 28;
     }
-    const List<int> daysInMonth = <int>[31, -1, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    return daysInMonth[month - 1];
+
+    return <int>[1, 3, 5, 7, 8, 10, 12].contains(month) ? 31 : 30;
   }
 }

@@ -30,6 +30,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+#  rxdart: 0.22.0
+  famapp_api:
+    path: ./openapi_gen
+
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -49,7 +53,6 @@ dependencies:
   dart_pusher_channels: ^1.2.2
   device_info_plus: ^10.1.0
   dio: ^5.4.0
-  either_dart: ^1.0.0
   extended_image: ^8.2.0
   ffmpeg_kit_flutter: ^6.0.3
   file_picker: ^6.1.1
@@ -82,6 +85,7 @@ dependencies:
   just_audio: ^0.9.36
   loading_animation_widget: ^1.2.0+4
   local_auth: ^2.3.0
+  openapi_generator_annotations: ^6.1.0
   package_info_plus: ^4.0.2
   path: ^1.8.3
   path_provider: ^2.0.13
@@ -123,6 +127,9 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+
+  openapi_generator: ^6.1.0
+  build_runner: ^2.4.13
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

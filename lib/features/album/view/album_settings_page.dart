@@ -53,7 +53,7 @@ class _AlbumSettingsPageState extends State<AlbumSettingsPage> {
   void _getInvitees() async {
     var memberViewmodel = MemberViewmodel();
     if (memberViewmodel.members.isEmpty) {
-      await memberViewmodel.getMembers();
+      await memberViewmodel.listMembers();
     }
     _potentialInvitees.clear();
     _potentialInvitees.addAll(MemberViewmodel().members);

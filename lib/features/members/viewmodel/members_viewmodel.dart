@@ -1,10 +1,8 @@
+import 'package:famapp/features/members/viewmodel/usecases/list_members.dart';
+
 import '../../../core/abstracts/inno_viewmodel.dart';
 import '../model/member_model.dart';
 import 'usecases/delete_member.dart';
-import 'usecases/get_members.dart';
-import 'usecases/params/delete_member_params.dart';
-import 'usecases/params/get_members_params.dart';
-import 'usecases/params/save_member_params.dart';
 import 'usecases/save_member.dart';
 
 class MemberViewmodel extends InnoViewmodel {
@@ -15,23 +13,24 @@ class MemberViewmodel extends InnoViewmodel {
   final List<Member> _members = [];
   List<Member> get members => _members;
 
-  Future<bool> getMembers() async {
-    final useCase = GetMembers();
-    final response = await useCase.call(params: GetMembersParams());
-    if (!validateUseCaseResponse(response)) {
+  Future<bool> listMembers() async {
+    final useCase = ListMembers();
+    final response = await useCase.call(members: _members, afterId: 0);
+    if (!validateUseCaseResponse2(response)) {
       return false;
     }
 
-    _members.clear();
-    _members.addAll(response.right);
     notifyListeners();
     return true;
   }
 
   Future<bool> saveMember({required Member member}) async {
     final useCase = SaveMember();
-    final response = await useCase.call(params: SaveMemberParams(model: member));
-    if (!validateUseCaseResponse(response)) {
+    final response = await useCase.call(
+      members: _members,
+      newMember: member,
+    );
+    if (!validateUseCaseResponse2(response)) {
       return false;
     }
     notifyListeners();
@@ -40,8 +39,8 @@ class MemberViewmodel extends InnoViewmodel {
 
   Future<bool> deleteMember({required Member member}) async {
     final useCase = DeleteMember();
-    final response = await useCase.call(params: DeleteMemberParams(model: member));
-    if (!validateUseCaseResponse(response)) {
+    final response = await useCase.call(members: _members, userUuid: member.uuid);
+    if (!validateUseCaseResponse2(response)) {
       return false;
     }
     for (var i = 0; i < _members.length; i++) {

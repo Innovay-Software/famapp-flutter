@@ -48,14 +48,25 @@ class AlbumSummaryHeaderBabyWidget extends StatelessWidget {
       Row(mainAxisAlignment: MainAxisAlignment.start, children: [
         SizedBox(width: 15, height: imageSize),
         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          InnoText('姓名：${album.metadata['name']}', color: InnoConfig.colors.textColor),
+          InnoText(
+            '姓名：${album.metadata['name']}',
+            color: InnoConfig.colors.textColor,
+          ),
           const SizedBox(height: 3),
-          InnoText('年龄：${BabyUtils.getBabyAgeText(DateTime(2020, 1, 21), DateTime.now())}',
-              color: InnoConfig.colors.textColor),
+          InnoText(
+            '年龄：${BabyUtils.getBabyAgeText(context, DateTime(2020, 1, 21), DateTime.now())}',
+            color: InnoConfig.colors.textColor,
+          ),
           const SizedBox(height: 3),
-          InnoText('出生日期：${album.metadata['birthDate']}', color: InnoConfig.colors.textColor),
+          InnoText(
+            '出生日期：${album.metadata['birthDate']}',
+            color: InnoConfig.colors.textColor,
+          ),
           const SizedBox(height: 3),
-          InnoText('文件数：${album.totalFiles} 照片/视频', color: InnoConfig.colors.textColor),
+          InnoText(
+            '文件数：${album.totalFiles} 照片/视频',
+            color: InnoConfig.colors.textColor,
+          ),
         ]),
         // Container(
         //     margin: const EdgeInsets.symmetric(horizontal: 8),

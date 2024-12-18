@@ -1,8 +1,10 @@
 import 'dart:math';
 
+import 'package:famapp/features/initialization/viewmodel/usercases/check_for_mobile_update.dart';
+import 'package:famapp/features/initialization/viewmodel/usercases/ping_backend.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:http/http.dart' as http;
 
+import '../../../api_agent.dart';
 import '../../../core/abstracts/inno_viewmodel.dart';
 import '../../../core/config.dart';
 import '../../../core/global_data.dart';
@@ -20,74 +22,14 @@ class InitializationViewmodel extends InnoViewmodel {
   Future<void> appInitialization({
     required Function() onLoginRequired,
     required Function() onTokenExpired,
-    required Function() onLoggedIn,
+    required Function() onOfflineLoggedIn,
+    required Function() onBackendLoggedIn,
+    required bool allowOfflineLogin,
   }) async {
     InnoGlobalData.switchLoadingOverlay(true);
-
-    ///
-    /// Step 1: load from local cache:
-    ///
-    DebugManager.info("AppInitialization Step1: load user info from local cache");
-
-    final userViewmodel = await UserViewmodel.asyncConstructor();
-    final isUserDataLoadedFromCache = userViewmodel.currentUser.isLoggedIn;
-    final accessToken = userViewmodel.currentUser.getAccessToken();
-
-    DebugManager.info("isUserDataLoadedFromCache: $isUserDataLoadedFromCache");
-    if (isUserDataLoadedFromCache) {
-      DebugManager.info(userViewmodel.currentUser);
-      DebugManager.info("Loaded accessToken = $accessToken ");
-      DebugManager.info("Avatar = ${userViewmodel.currentUser.avatarUrl}");
-    }
-
-    if (accessToken.isEmpty) {
-      InnoGlobalData.switchLoadingOverlay(false);
-      if (!isUserDataLoadedFromCache) {
-        DebugManager.warning("Did not load user from cache, and did not find user accessToken, needs login action");
-        onLoginRequired();
-        return;
-      } else {
-        DebugManager.warning(
-            "Did load user from cache, but did not find user accessToken, continue to token expired action");
-        onTokenExpired();
-        return;
-      }
-    }
-    if (isUserDataLoadedFromCache) {
-      DebugManager.info("User data loaded from cache successfully");
-      onLoggedIn();
-    }
-
-    ///
-    /// Step2: Check for internet access
-    ///
-    DebugManager.info("AppInitialization Step2: Check for backend availability");
-    while (true) {
-      if (await InnoGlobalData.internetService.connected()) {
-        // if is connected to internet, break and continue to next step
-        InnoGlobalData.isConnectedToInternet = true;
-        break;
-      }
-      if (isUserDataLoadedFromCache) {
-        // if not connected to internet, but found local user model cache, continue
-        break;
-      }
-
-      // If not connected to internet and didn't find a use model cache
-      // This is likely due to opening the app for the first time and haven't given internet access permissions yet
-      // Display a snack bar message and keep trying after 1 second
-      DebugManager.error('Initialization Service: has no internet connection, stop initialization');
-      SnackBarManager.displayMessage(
-        AppLocalizations.of(InnoGlobalData.materialAppKey.currentContext!)!.networkUnavailableRetryIn10Seconds,
-      );
-      await Future.delayed(const Duration(seconds: 10));
-    }
-
-    ///
-    /// Step 3: Check server proximity
-    ///
-    DebugManager.info("AppInitialization Step3: Check for backend server proximity");
-    await _serverProximityInitialization();
+    final res = await appInitializationOfflineLogin(onOfflineLoggedIn: onOfflineLoggedIn);
+    InnoGlobalData.switchLoadingOverlay(false);
+    await appInitializationServerAvailability();
 
     ///
     /// Step 4: Do server specific initializations
@@ -99,57 +41,120 @@ class InitializationViewmodel extends InnoViewmodel {
     }
 
     ///
-    /// Step5: Refresh token
+    /// Step5: Log in with access token
     ///
-    DebugManager.info("AppInitialization Step5: Refresh Token");
-    var tokenRefreshStatus = await userViewmodel.loginWithAccessToken(accessToken);
-    if (!tokenRefreshStatus) {
+    DebugManager.info("AppInitialization Step5: accessTokenLogin");
+    final accessToken = UserViewmodel().currentUser.getAccessToken();
+    if (!await UserViewmodel().loginWithAccessToken(accessToken)) {
       onTokenExpired();
       return;
     }
-    if (!isUserDataLoadedFromCache) {
-      // if token refresh succeeded but didn't call onLoggedIn before, call it now
-      onLoggedIn();
-    }
+
+    onBackendLoggedIn();
 
     ///
     /// Step6: Initialize websockets
     ///
-    DebugManager.info("AppInitialization Step6: Placeholder, gRPC in the future maybe?");
+    DebugManager.info("AppInitialization Step6: Placeholder, possible future gRPC migration");
     InnoGlobalData.switchLoadingOverlay(false);
+
+    ///
+    /// Step7: Check for mobile updates
+    ///
+    final userCase = CheckForMobileUpdate();
+    if (UserViewmodel.mainContext.mounted) {
+      userCase.call(UserViewmodel.mainContext);
+    }
+  }
+
+  Future<bool> appInitializationOfflineLogin({
+    required Function() onOfflineLoggedIn,
+  }) async {
+    DebugManager.info("appInitializationOfflineLogin: load user info from local cache");
+    final userViewmodel = await UserViewmodel.asyncConstructor();
+    final accessToken = userViewmodel.currentUser.getAccessToken();
+
+    if (accessToken.isNotEmpty) {
+      onOfflineLoggedIn();
+      return true;
+    }
+    return false;
+  }
+
+  Future<void> appInitializationServerAvailability() async {
+    DebugManager.info("appInitializationServerAvailability: Check for backend availability");
+
+    ///
+    /// Step 2: Check for internet connection
+    /// Once server proximity is determined, it will not change until restarting APP
+    ///
+    while (true) {
+      if (await InnoGlobalData.internetService.connected()) {
+        // if is connected to internet, break and continue to next step
+        InnoGlobalData.isConnectedToInternet = true;
+        break;
+      }
+
+      // If not connected to internet and didn't find a use model cache
+      // This is likely due to opening the app for the first time and haven't given internet access permissions yet
+      // Display a snack bar message and keep trying after 1 second
+      DebugManager.error('Initialization Service: has no internet connection, recheck in 10 seconds');
+      SnackBarManager.displayMessage(
+        AppLocalizations.of(InnoGlobalData.materialAppKey.currentContext!)!.networkUnavailableRetryIn10Seconds,
+      );
+      await Future.delayed(const Duration(seconds: 10));
+    }
+
+    ///
+    /// Step 3: Check server proximity and Initialize ApiAgent
+    /// Once server proximity is determined, it will not change until restarting APP
+    ///
+    DebugManager.info("AppInitialization Step3: Check for backend server proximity");
+    await _serverProximityInitialization();
+    final mainNetworkConfig = InnoConfig.mainNetworkConfig;
+    final apiAgent = ApiAgent.init(
+      InnoGlobalData.useRegionRemote ? mainNetworkConfig.regionRemoteBackend : mainNetworkConfig.regionCABackend,
+      (String refreshToken, String accessToken) {
+        if (refreshToken.isNotEmpty) {
+          UserViewmodel().currentUser.setRefreshToken(refreshToken);
+        }
+        if (accessToken.isNotEmpty) {
+          UserViewmodel().currentUser.setAccessToken(refreshToken);
+        }
+      },
+    );
+    DebugManager.warning("ApiInitialized");
   }
 
   Future<void> _serverProximityInitialization() async {
-    var preferredBackendServer = InnoSecureStorageService().getStaticStorageValue(
+    final preferredBackendServer = InnoSecureStorageService().getStaticStorageValue(
       InnoSecureStorageKeys.preferredBackendServer,
     );
-    var textCA = AppLocalizations.of(InnoGlobalData.materialAppKey.currentContext!)!.regionCA;
-    var textRemote = AppLocalizations.of(InnoGlobalData.materialAppKey.currentContext!)!.regionRemote;
+    final textCA = AppLocalizations.of(InnoGlobalData.materialAppKey.currentContext!)!.regionCA;
+    final textRemote = AppLocalizations.of(InnoGlobalData.materialAppKey.currentContext!)!.regionRemote;
 
     var waitSeconds = 0;
     while (true) {
-      var hostCA = InnoConfig.mainNetworkConfig.pingRegionCA();
-      var hostRemote = InnoConfig.mainNetworkConfig.pingRegionRemote();
       var hostLatencyRemote = -1;
       var hostLatencyCA = -1;
       if (preferredBackendServer == BackendServerType.regionRemote.toShortString()) {
-        hostLatencyRemote = await _getHostLatency(hostRemote, textRemote);
+        hostLatencyRemote = await _getHostLatency(false);
         if (hostLatencyRemote < 0) {
-          hostLatencyCA = await _getHostLatency(hostCA, textCA);
+          hostLatencyCA = await _getHostLatency(true);
         }
       } else if (preferredBackendServer == BackendServerType.regionCA.toShortString()) {
-        hostLatencyCA = await _getHostLatency(hostCA, textCA);
+        hostLatencyCA = await _getHostLatency(true);
         if (hostLatencyCA < 0) {
-          hostLatencyRemote = await _getHostLatency(hostRemote, textRemote);
+          hostLatencyRemote = await _getHostLatency(false);
         }
       } else {
-        hostLatencyRemote = await _getHostLatency(hostRemote, textRemote);
-        hostLatencyCA = await _getHostLatency(hostCA, textCA);
+        hostLatencyRemote = await _getHostLatency(false);
+        hostLatencyCA = await _getHostLatency(true);
       }
 
       DebugManager.log("CA, Remote latency: $hostLatencyCA, $hostLatencyRemote");
 
-      // // Ping main server and CN server, and see which server has lower ping latency
+      // // Ping main server and remote server, and see which server has lower ping latency
       // var hostLatencyRemote = await _pingServer(Uri.parse(InnovayConfig.mainNetworkConfig.regionRemoteBackend).host);
       // var hostLatencyCA = await _pingServer(Uri.parse(InnovayConfig.mainNetworkConfig.regionCABackend).host);
 
@@ -180,25 +185,29 @@ class InitializationViewmodel extends InnoViewmodel {
     );
   }
 
-  Future<int> _getHostLatency(String url, String location) async {
+  Future<int> _getHostLatency(bool useCaBackend) async {
+    var textCA = AppLocalizations.of(InnoGlobalData.materialAppKey.currentContext!)!.regionCA;
+    var textRemote = AppLocalizations.of(InnoGlobalData.materialAppKey.currentContext!)!.regionRemote;
+
     try {
       SnackBarManager.displayMessage(
-        AppLocalizations.of(InnoGlobalData.materialAppKey.currentContext!)!.connectingToLocationServer(location),
+        AppLocalizations.of(InnoGlobalData.materialAppKey.currentContext!)!
+            .connectingToLocationServer(useCaBackend ? textCA : textRemote),
       );
-      var startTime = DateTime.now().microsecondsSinceEpoch;
-      var res = await http.get(Uri.parse(url), headers: {}).timeout(const Duration(seconds: 5));
-      DebugManager.log(res.statusCode.toString());
-      var latency = res.statusCode == 200 ? DateTime.now().microsecondsSinceEpoch - startTime : -1;
-      DebugManager.log("hostLatencyUrl: $url");
+      final useCase = PingBackend();
+      final response = await useCase.call(useCaBackend);
+      final latency = response.data['latency'] ?? -1;
       SnackBarManager.displayMessage(
-        AppLocalizations.of(InnoGlobalData.materialAppKey.currentContext!)!.connectedToLocationServerFailed(location),
+        AppLocalizations.of(InnoGlobalData.materialAppKey.currentContext!)!
+            .connectedToLocationServerFailed(useCaBackend ? textCA : textRemote),
       );
 
       return latency;
     } on Exception catch (e) {
       DebugManager.log(e.toString());
       SnackBarManager.displayMessage(
-        AppLocalizations.of(InnoGlobalData.materialAppKey.currentContext!)!.connectedToLocationServerFailed(location),
+        AppLocalizations.of(InnoGlobalData.materialAppKey.currentContext!)!
+            .connectedToLocationServerFailed(useCaBackend ? textCA : textRemote),
       );
     }
     return -1;

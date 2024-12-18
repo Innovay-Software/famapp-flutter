@@ -37,7 +37,7 @@ class _MemberListPageState extends State<MemberListPage> {
   }
 
   void _getMembers() {
-    final success = _viewmodel.getMembers();
+    final success = _viewmodel.listMembers();
     _refreshController.refreshCompleted();
     _refreshController.loadComplete();
     setState(() {});

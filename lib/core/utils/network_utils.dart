@@ -51,9 +51,12 @@ class NetworkManager {
       DebugManager.rest(response.body);
     }
     if (response.statusCode != 200) {
-      if (logResponses) {
+      if (logResponses || true) {
         DebugManager.rest(
             "Request error: ${response.request?.url.toString()}, stats code = ${response.statusCode.toString()}");
+        DebugManager.rest(
+          response.body
+        );
       }
       SnackBarManager.displayMessage('System error ${response.statusCode}');
       throw InnoApiException(url, '${response.statusCode} Error');

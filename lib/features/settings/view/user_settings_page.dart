@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../core/config.dart';
-import '../../../core/utils/snack_bar_manager.dart';
 import '../../../core/views/app_bar.dart';
 import '../../../core/widgets/buttons/background_button.dart';
 import '../../../core/widgets/custom_ui_data_entry_bars.dart';
@@ -98,25 +97,25 @@ class _UserSettingsPageState extends State<UserSettingsPage> with AutomaticKeepA
   }
 
   void _onSaveTap() async {
-    if (_password.isNotEmpty || _password2.isNotEmpty) {
-      if (_password.length < 4) {
-        return SnackBarManager.displayMessage(AppLocalizations.of(context)!.passwordTooShort);
-      }
-      if (_password != _password2) {
-        return SnackBarManager.displayMessage(AppLocalizations.of(context)!.passwordsDoNotMatch);
-      }
-    }
+    // if (_password.isNotEmpty || _password2.isNotEmpty) {
+    //   if (_password.length < 4) {
+    //     return SnackBarManager.displayMessage(AppLocalizations.of(context)!.passwordTooShort);
+    //   }
+    //   if (_password != _password2) {
+    //     return SnackBarManager.displayMessage(AppLocalizations.of(context)!.passwordsDoNotMatch);
+    //   }
+    // }
+    //
+    // if (_iLockerPasscode.isNotEmpty) {
+    //   if (int.tryParse(_iLockerPasscode) == null) {
+    //     return SnackBarManager.displayMessage(AppLocalizations.of(context)!.passwordLocker);
+    //   }
+    //   if (_iLockerPasscode.length != 6) {
+    //     return SnackBarManager.displayMessage(AppLocalizations.of(context)!.passwordLocker);
+    //   }
+    // }
 
-    if (_iLockerPasscode.isNotEmpty) {
-      if (int.tryParse(_iLockerPasscode) == null) {
-        return SnackBarManager.displayMessage(AppLocalizations.of(context)!.passwordLocker);
-      }
-      if (_iLockerPasscode.length != 6) {
-        return SnackBarManager.displayMessage(AppLocalizations.of(context)!.passwordLocker);
-      }
-    }
-
-    final result = await _viewmodel.saveUserProfile(
+    final result = await _viewmodel.updateUserProfile(
       name: _name,
       mobile: _mobile,
       password: _password,

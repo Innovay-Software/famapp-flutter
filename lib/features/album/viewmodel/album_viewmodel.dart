@@ -36,15 +36,15 @@ class AlbumViewmodel extends InnoViewmodel {
         break;
       }
     }
-    if (_currentAlbum == null) {
+    if (_currentAlbum.isDummy()) {
       if (_albums.isNotEmpty) {
         _currentAlbum = _albums.first;
       }
     }
-    if (_currentAlbum != null) {
+    if (!_currentAlbum.isDummy()) {
       InnoSecureStorageService().setStaticStorageValue(
         InnoSecureStorageKeys.lastActiveAlbumId,
-        _currentAlbum!.id.toString(),
+        _currentAlbum.id.toString(),
       );
     }
     notifyListeners();
@@ -123,7 +123,7 @@ class AlbumViewmodel extends InnoViewmodel {
   Future<bool> saveAlbum(Album album) async {
     final useCase = SaveAlbum();
     final response = await useCase.call(album: album);
-    if (!validateUseCaseResponse(response)) {
+    if (!validateUseCaseResponse2(response)) {
       return false;
     }
     notifyListeners();
@@ -132,8 +132,8 @@ class AlbumViewmodel extends InnoViewmodel {
 
   Future<bool> deleteAlbum(Album album) async {
     final useCase = DeleteAlbum();
-    final response = await useCase.call(album: album);
-    if (!validateUseCaseResponse(response)) {
+    final response = await useCase.call(albums: AlbumViewmodel().albums, albumId: album.id);
+    if (!validateUseCaseResponse2(response)) {
       return false;
     }
 
@@ -149,7 +149,7 @@ class AlbumViewmodel extends InnoViewmodel {
   Future<bool> setShotAtDate(List<int> albumFileIds, DateTime targetDate) async {
     final useCase = SetAlbumFilesShotAtDate();
     final response = await useCase.call(albumFileIds: albumFileIds, targetDate: targetDate);
-    if (!validateUseCaseResponse(response)) {
+    if (!validateUseCaseResponse2(response)) {
       return false;
     }
     notifyListeners();
@@ -196,7 +196,7 @@ class AlbumViewmodel extends InnoViewmodel {
       pivotDate: pivotDate,
       beforeShotAtDateTime: forceReload || album.files.isEmpty ? DateTime.now() : album.files.last.shotAt,
     );
-    if (!validateUseCaseResponse(response)) {
+    if (!validateUseCaseResponse2(response)) {
       return false;
     }
     DebugManager.log("LoadFiles, notifyListeners");
@@ -210,7 +210,7 @@ class AlbumViewmodel extends InnoViewmodel {
   }) async {
     final useCase = DeleteAlbumFiles();
     final response = await useCase.call(album: album, deleteFileIds: albumFileIds);
-    if (!validateUseCaseResponse(response)) {
+    if (!validateUseCaseResponse2(response)) {
       return false;
     }
     notifyListeners();
@@ -224,7 +224,7 @@ class AlbumViewmodel extends InnoViewmodel {
   }) async {
     final useCase1 = MoveAlbumFiles();
     final response1 = await useCase1.call(oldAlbum: oldAlbum, newAlbum: newAlbum, fileIds: albumFileIds);
-    if (!validateUseCaseResponse(response1)) {
+    if (!validateUseCaseResponse2(response1)) {
       return false;
     }
 
@@ -235,7 +235,7 @@ class AlbumViewmodel extends InnoViewmodel {
       pivotDate: DateTime.now().toUtc(),
       beforeShotAtDateTime: DateTime.now(),
     );
-    if (!validateUseCaseResponse(response2)) {
+    if (!validateUseCaseResponse2(response2)) {
       return false;
     }
 
@@ -246,7 +246,7 @@ class AlbumViewmodel extends InnoViewmodel {
   Future<bool> saveAlbumFile({required AlbumFile albumFile}) async {
     final useCase1 = SaveAlbumFile();
     final response1 = await useCase1.call(albumFile: albumFile);
-    if (!validateUseCaseResponse(response1)) {
+    if (!validateUseCaseResponse2(response1)) {
       return false;
     }
 

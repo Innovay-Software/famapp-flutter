@@ -59,7 +59,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final locale = Localizations.localeOf(context);
     InnoGlobalData.appViewPadding = MediaQuery.of(context).padding;
     final iconSize = min(MediaQuery.of(context).size.width * 0.06, MediaQuery.of(context).size.height * 0.06);
 
@@ -271,7 +270,7 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     final viewmodel = UserViewmodel();
-    final response = await viewmodel.login(_mobile, _passwordController.text);
+    final response = await viewmodel.login(_mobile, _passwordController.text, '');
     if (response) {
       _navigateToHomePage();
     }

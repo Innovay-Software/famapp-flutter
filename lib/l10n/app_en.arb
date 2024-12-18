@@ -116,6 +116,19 @@
   "newNote": "New Note",
   "noNewVersion": "No updates found",
   "notes": "Notes",
+
+  "numWeeks": "{item} week{ending}",
+  "@numWeeks": {
+    "placeholder": {
+      "item": {
+        "type": "num"
+      },
+      "ending": {
+        "type": "String"
+      }
+    }
+  },
+
   "others": "Others",
   "passwordLocker": "Locker pin must be a six digit number",
   "passwordTooShort": "Password too short",

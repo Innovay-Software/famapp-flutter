@@ -4,6 +4,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
+import '../utils/debug_utils.dart';
 import 'innovay_text.dart';
 
 class InnovayCachedImage extends StatefulWidget {
@@ -91,7 +92,7 @@ class _InnovayCachedImageState extends State<InnovayCachedImage> {
               )
             : ExtendedImage.network(
                 widget.url,
-                cache: true,
+                cache: false,
                 cacheKey: widget.cacheKey,
                 width: widget.width,
                 height: widget.height,
@@ -110,7 +111,7 @@ class _InnovayCachedImageState extends State<InnovayCachedImage> {
                     return null;
                   }
                   if (state.extendedImageLoadState == LoadState.failed) {
-                    // DebugManager.log("Failed to load image: ${widget.url}, headers: ${widget.httpHeaders}");
+                    DebugManager.log("Failed to load image: ${widget.url}, headers: ${widget.httpHeaders}");
                     if (widget.errorWidget != null) {
                       return widget.errorWidget;
                     }

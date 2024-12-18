@@ -1,37 +1,36 @@
-import 'package:either_dart/either.dart';
-
-import '../../../../core/config.dart';
-import '../../../../core/errors/data_fetch_error.dart';
-import '../../../../core/utils/network_utils.dart';
-import '../../../../core/utils/use_case_exception_handler.dart';
+import '../../../../core/utils/api_utils.dart';
 import '../../model/album.dart';
+import '../datasources/AlbumFilesRemoteDatasource.dart';
 
 class MoveAlbumFiles {
-  Future<Either<DataFetchError, bool>> call({
+  Future<ApiResponse> call({
     required Album oldAlbum,
     required Album newAlbum,
     required List<int> fileIds,
   }) async {
-    try {
-      final response = await NetworkManager.postRequestSync(
-        InnoConfig.mainNetworkConfig.moveFilesToAlbum(newAlbum.id),
-        dataLoad: {'fileIds': fileIds},
-      );
+    final datasource = AlbumFilesRemoteDatasource();
+    final response = await datasource.updateMultipleFiles(
+      folderFileIds: fileIds,
+      newFolderId: newAlbum.id,
+      newShotAtMicroTimestamp: -1,
+    );
 
-      for (var i = 0; i < oldAlbum.files.length; i++) {
-        if (fileIds.isEmpty) {
-          break;
-        }
-
-        if (fileIds.contains(oldAlbum.files[i].id)) {
-          fileIds.remove(oldAlbum.files[i].id);
-          oldAlbum.files.removeAt(i);
-          i -= 1;
-        }
-      }
-      return const Right(true);
-    } catch (e, stacktrace) {
-      return Left(UseCaseExceptionHandler.defaultHandler(e, stacktrace));
+    if (!response.successful) {
+      return response;
     }
+
+    for (var i = 0; i < oldAlbum.files.length; i++) {
+      if (fileIds.isEmpty) {
+        break;
+      }
+
+      if (fileIds.contains(oldAlbum.files[i].id)) {
+        fileIds.remove(oldAlbum.files[i].id);
+        oldAlbum.files.removeAt(i);
+        i--;
+      }
+    }
+
+    return response;
   }
 }

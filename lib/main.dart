@@ -88,6 +88,7 @@ class _FamappState extends State<Famapp> {
   @override
   void initState() {
     super.initState();
+    UserViewmodel.mainContext = context;
   }
 
   @override

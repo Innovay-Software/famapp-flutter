@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../config.dart';
 import '../utils/cache_utils.dart';
-import '../utils/debug_utils.dart';
 import 'cached_image.dart';
 import 'innovay_text.dart';
 
@@ -83,7 +82,6 @@ class InnoAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DebugManager.log('InnovayAvatar url = $url');
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
       child: InnovayCachedImage(

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:famapp/core/widgets/avatar.dart';
+import 'package:famapp/features/initialization/viewmodel/usercases/check_for_mobile_update.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -64,7 +65,7 @@ class _UserCenterPageState extends State<UserCenterPage> with AutomaticKeepAlive
     var packageInfo = InnoGlobalData.packageInfo;
     colorLerp(degree) => Color.lerp(const Color(0xFFC850C0), const Color(0xFF4158D0), degree) ?? Colors.white;
 
-    DebugManager.log("aaaavatar = ${user.avatarUrl}");
+    DebugManager.log("aaaavatar = ${user.name}, ${user.avatarUrl}");
     List<Map> links = [
       {
         'title': AppLocalizations.of(context)!.locker,
@@ -377,7 +378,8 @@ class _UserCenterPageState extends State<UserCenterPage> with AutomaticKeepAlive
   }
 
   void _onVersionTap() {
-    CommonUtils.checkForNewVersion(context, AppLocalizations.of(context)!.noNewVersion);
+    final userCase = CheckForMobileUpdate();
+    userCase.call(context);
   }
 
   void _onPreferredLocationTap() {

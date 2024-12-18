@@ -1,21 +1,17 @@
-import 'package:either_dart/either.dart';
-import 'package:famapp/core/utils/datetime_util.dart';
-
-import '../../../../core/config.dart';
-import '../../../../core/errors/data_fetch_error.dart';
-import '../../../../core/utils/network_utils.dart';
-import '../../../../core/utils/use_case_exception_handler.dart';
+import '../../../../core/utils/api_utils.dart';
+import '../datasources/AlbumFilesRemoteDatasource.dart';
 
 class SetAlbumFilesShotAtDate {
-  Future<Either<DataFetchError, bool>> call({required List<int> albumFileIds, required DateTime targetDate}) async {
-    try {
-      final response = await NetworkManager.postRequestSync(
-        InnoConfig.mainNetworkConfig.setShotAtDate(DatetimeUtils.formattedDate(targetDate)),
-        dataLoad: {'fileIds': albumFileIds},
-      );
-      return const Right(true);
-    } catch (e, stacktrace) {
-      return Left(UseCaseExceptionHandler.defaultHandler(e, stacktrace));
+  Future<ApiResponse> call({required List<int> albumFileIds, required DateTime targetDate}) async {
+    final datasource = AlbumFilesRemoteDatasource();
+    final response = await datasource.updateMultipleFiles(
+      folderFileIds: albumFileIds,
+      newFolderId: -1,
+      newShotAtMicroTimestamp: targetDate.microsecondsSinceEpoch,
+    );
+    if (!response.successful) {
+      return response;
     }
+    return response;
   }
 }

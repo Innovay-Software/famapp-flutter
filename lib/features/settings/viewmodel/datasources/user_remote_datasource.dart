@@ -1,26 +1,34 @@
-import '../../../../core/config.dart';
-import '../../../../core/global_data.dart';
-import '../../../../core/utils/network_utils.dart';
+import 'package:famapp/api_agent.dart';
+
+import '../../../../core/utils/api_utils.dart';
 
 class UserRemoteDatasource {
-  Future<Map<String, dynamic>> login({required String mobile, required String password}) async {
-    var res = await NetworkManager.postRequestSync(
-      InnoConfig.mainNetworkConfig.login(),
-      dataLoad: {
-        'mobile': mobile,
-        'password': password,
-        'deviceToken': InnoGlobalData.deviceToken,
-      },
+  Future<ApiResponse> login({
+    required String mobile,
+    required String password,
+    required String deviceToken,
+  }) async {
+    return ApiAgent.instance.authMobileLoginEndPoint(
+      mobile,
+      password,
+      deviceToken,
     );
-    return res;
   }
 
-  Future<Map<String, dynamic>> loginWithAccessToken({required String accessToken}) async {
-    var res = await NetworkManager.postRequestSync(
-      InnoConfig.mainNetworkConfig.accessTokenLogin(),
-      dataLoad: {'deviceToken': InnoGlobalData.deviceToken},
-      headers: {'Authorization': 'Bearer $accessToken'},
-    );
-    return res;
+  Future<ApiResponse> loginWithAccessToken({
+    required String accessToken,
+    required String deviceToken,
+  }) async {
+    return ApiAgent.instance.authAccessTokenLoginEndPoint(accessToken, deviceToken);
+  }
+
+  Future<ApiResponse> updateUserProfile({
+    required String? name,
+    required String? mobile,
+    required String? password,
+    required String? lockerPasscode,
+    required String? avatar,
+  }) async {
+    return ApiAgent.instance.userUpdateProfileEndPoint(name, mobile, password, lockerPasscode, avatar);
   }
 }

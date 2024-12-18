@@ -1,28 +1,34 @@
-import '../../../../core/config.dart';
-import '../../../../core/utils/network_utils.dart';
-import '../../model/member_model.dart';
-import '../usecases/params/delete_member_params.dart';
-import '../usecases/params/get_members_params.dart';
-import '../usecases/params/save_member_params.dart';
+import '../../../../api_agent.dart';
+import '../../../../core/utils/api_utils.dart';
 
 class MemberRemoteDatasource {
-  Future<List<Member>> getMembers({required GetMembersParams params}) async {
-    var url = InnoConfig.mainNetworkConfig.adminGetAllMembers(0);
-    var res = await NetworkManager.postRequestSync(url);
-    var members = <Member>[];
-    for (var item in res['data']['users']) {
-      members.add(Member.fromJson(item));
-    }
-    return members;
+  Future<ApiResponse> listMembers({
+    required int afterId,
+  }) async {
+    return ApiAgent.instance.adminListUsersEndPoint(afterId);
   }
 
-  Future<void> saveMember({required SaveMemberParams params}) async {
-    var url = InnoConfig.mainNetworkConfig.adminSaveMemberInfo(params.model.id);
-    var res = await NetworkManager.postRequestSync(url, dataLoad: params.model.toJson());
+  Future<ApiResponse> saveMember({
+    required int userId,
+    required String name,
+    required String mobile,
+    required String password,
+    required String lockerPasscode,
+    required String role,
+    required int familyId,
+  }) async {
+    return ApiAgent.instance.adminSaveUserEndPoint(
+      userId,
+      name,
+      mobile,
+      password,
+      lockerPasscode,
+      role,
+      familyId,
+    );
   }
 
-  Future<void> deleteMember({required DeleteMemberParams params}) async {
-    var url = InnoConfig.mainNetworkConfig.adminDeleteMember(params.model.id);
-    var res = await NetworkManager.postRequestSync(url);
+  Future<ApiResponse> deleteMember({required String userUuid}) async {
+    return ApiAgent.instance.adminDeleteUserEndPoint(userUuid);
   }
 }

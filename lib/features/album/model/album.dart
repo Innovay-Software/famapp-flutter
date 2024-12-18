@@ -171,7 +171,7 @@ class Album {
     return false;
   }
 
-  bool isDummyAlbum() {
+  bool isDummy() {
     return id == 0;
   }
 

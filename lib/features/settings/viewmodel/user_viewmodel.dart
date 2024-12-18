@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:famapp/features/settings/viewmodel/usecases/update_user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -17,8 +18,6 @@ import '../../members/model/member_model.dart';
 import '../../members/viewmodel/members_viewmodel.dart';
 import '../model/used_account.dart';
 import '../model/user.dart';
-import 'usecases/params/save_user_settings_params.dart';
-import 'usecases/save_user_profile.dart';
 import 'usecases/upload_user_avatar.dart';
 import 'usecases/user_login.dart';
 import 'usecases/user_refresh_token.dart';
@@ -28,6 +27,7 @@ import 'used_account_viewmodel.dart';
 /// User Viewmodel
 ///
 class UserViewmodel extends InnoViewmodel {
+  static late BuildContext mainContext;
   static UserViewmodel? _instance;
   User _user = User.dummy();
   User get currentUser => _user;
@@ -50,32 +50,36 @@ class UserViewmodel extends InnoViewmodel {
     return _instance!;
   }
 
-  Future<bool> login(String mobile, String password) async {
+  // Handles user log in, returns bool to indicate if log in was successful
+  Future<bool> login(String mobile, String password, String deviceToken) async {
     final useCase = UserLogin();
-    final response = await useCase.call(mobile: mobile, password: password);
-    if (!validateUseCaseResponse(response)) {
+    final response = await useCase.call(
+      mobile: mobile,
+      password: password,
+      deviceToken: deviceToken,
+    );
+
+    if (!validateUseCaseResponse2(response)) {
       return false;
     }
 
-    final responseData = response.right['data'];
-    _onUserLoggedIn(responseData, '');
+    _onUserLoggedIn(response.data, '');
     return true;
   }
 
-  Future<bool> loginWithAccessToken(String savedAccessToken) async {
+  Future<bool> loginWithAccessToken(String localAccessToken) async {
     final useCase = UserLoginWithAccessToken();
-    final response = await useCase.call(accessToken: savedAccessToken);
-    if (!validateUseCaseResponse(response)) {
+    final response = await useCase.call(accessToken: localAccessToken);
+    if (!validateUseCaseResponse2(response)) {
       return false;
     }
 
-    final responseData = response.right['data'];
-    _onUserLoggedIn(responseData, savedAccessToken);
+    _onUserLoggedIn(response.data, localAccessToken);
     return true;
   }
 
-  void _onUserLoggedIn(Map<String, dynamic> jsonData, String savedAccessToken) {
-    DebugManager.warning("_onUserLoggedIn: $savedAccessToken");
+  void _onUserLoggedIn(Map<String, dynamic> jsonData, String localAccessToken) {
+    DebugManager.warning("_onUserLoggedIn: $localAccessToken");
     final userData = jsonData['userData'];
     final memberListData = jsonData['memberList'];
     final foldersData = jsonData['folders'];
@@ -148,6 +152,7 @@ class UserViewmodel extends InnoViewmodel {
     InnoGlobalData.bottomNavigatorContext = null;
   }
 
+  // Picks a media, upload it to cloud, and saves user profile
   Future<bool> updateUserAvatar(Function(InnoFileUploadItem?) progressCallback) async {
     final filePaths = await FileService.pickMedias(1, true, true, false);
     if (filePaths.isEmpty) {
@@ -160,46 +165,43 @@ class UserViewmodel extends InnoViewmodel {
 
     final InnoFileUploadItem uploadItem = InnoFileUploadItem(filePaths.first, '', false, false, DateTime.now());
     final useCase = UploadUserAvatar();
-    final response = await useCase.call(user: _user, uploadItem: uploadItem, progressCallback: progressCallback);
-    if (!validateUseCaseResponse(response)) {
+    await useCase.call(user: _user, uploadItem: uploadItem, progressCallback: progressCallback);
+    if (!uploadItem.isUploaded) {
+      DebugManager.log("Unable to upload file, rolling back to oldAvatarUrl");
       currentUser.avatarUrl = oldAvatarUrl;
       notifyListeners();
       return false;
     }
 
-    currentUser.avatarUrl = response.right.fileUrl;
-    notifyListeners();
+    currentUser.avatarUrl = uploadItem.remoteUrl;
     progressCallback(null);
-    await saveUserProfile(
-      avatarUrl: currentUser.avatarUrl,
-    );
-    notifyListeners();
-    return true;
+
+    return updateUserProfile(avatar: currentUser.avatarUrl);
   }
 
-  Future<bool> saveUserProfile({
+  // Updates user profile
+  Future<bool> updateUserProfile({
     String name = '',
     String mobile = '',
     String password = '',
     String lockerPasscode = '',
-    String avatarUrl = '',
+    String avatar = '',
   }) async {
-    final total = [name, mobile, password, lockerPasscode, avatarUrl].join('');
+    final total = [name, mobile, password, lockerPasscode, avatar].join('');
     DebugManager.info("Save user profile: $total");
     if (total.isEmpty) {
       return true;
     }
     final user = UserViewmodel().currentUser;
-    final params = SaveUserSettingsParams(
-      name: name != '' ? name : user.name,
-      mobile: mobile != '' ? mobile : user.mobile,
-      password: password,
-      lockerPasscode: lockerPasscode != '' ? lockerPasscode : user.lockerPasscode,
-      avatarUrl: avatarUrl != '' ? avatarUrl : user.avatarUrl,
+    final useCase = UpdateUserProfile();
+    final response = await useCase.call(
+      name: name.isEmpty ? null : name,
+      mobile: mobile.isEmpty ? null : mobile,
+      password: password.isEmpty ? null : password,
+      lockerPasscode: lockerPasscode.isEmpty ? null : lockerPasscode,
+      avatar: avatar.isEmpty ? null : avatar,
     );
-    final useCase = SaveUserProfile();
-    final response = await useCase.call(params: params);
-    if (!validateUseCaseResponse(response)) {
+    if (!validateUseCaseResponse2(response)) {
       return false;
     }
 
@@ -208,8 +210,8 @@ class UserViewmodel extends InnoViewmodel {
     if (lockerPasscode.isNotEmpty) {
       user.lockerPasscode = lockerPasscode;
     }
-    if (avatarUrl.isNotEmpty) {
-      user.avatarUrl = response.right["data"]["userData"]["avatar"];
+    if (avatar.isNotEmpty) {
+      user.avatarUrl = response.data["userData"]["avatar"];
       CacheUtils.setAvatar(user.id, user.avatarUrl);
     }
 

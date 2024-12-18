@@ -1,18 +1,22 @@
-import 'package:either_dart/either.dart';
+import 'package:famapp/features/locker/model/locker_note_model.dart';
 
-import '../../../../core/errors/data_fetch_error.dart';
-import '../../../../core/utils/use_case_exception_handler.dart';
+import '../../../../core/utils/api_utils.dart';
 import '../datasources/locker_notes_remote_datasource.dart';
-import '../usecases/params/delete_locker_note_params.dart';
 
 class DeleteLockerNote {
-  Future<Either<DataFetchError, void>> call({required DeleteLockerNoteParams params}) async {
-    try {
-      final remoteDatasource = LockerNotesRemoteDatasource();
-      final response = await remoteDatasource.deleteLockerNote(params: params);
-      return Right(response);
-    } catch (e, stacktrace) {
-      return Left(UseCaseExceptionHandler.defaultHandler(e, stacktrace));
+  Future<ApiResponse> call({required List<LockerNote> notes, required int noteId}) async {
+    final remoteDatasource = LockerNotesRemoteDatasource();
+    final response = await remoteDatasource.deleteLockerNote(noteId: noteId);
+    if (!response.successful) {
+      return response;
     }
+
+    for (var i = 0; i < notes.length; i++) {
+      if (notes[i].id == noteId) {
+        notes.removeAt(i);
+        break;
+      }
+    }
+    return response;
   }
 }

@@ -32,7 +32,9 @@ class _InitializationPageState extends State<InitializationPage> {
     await _viewmodel.appInitialization(
       onLoginRequired: _onLoginRequired,
       onTokenExpired: _onTokenExpired,
-      onLoggedIn: _onUserLoggedIn,
+      onOfflineLoggedIn: _onUserOfflineLoggedIn,
+      onBackendLoggedIn: _onUserBackendLoggedIn,
+      allowOfflineLogin: true,
     );
   }
 
@@ -55,8 +57,16 @@ class _InitializationPageState extends State<InitializationPage> {
     );
   }
 
-  void _onUserLoggedIn() {
-    CommonUtils.navigateToHomeTab0AndClearHistory(context);
+  void _onUserOfflineLoggedIn() {
+    if (mounted) {
+      CommonUtils.navigateToHomeTab0AndClearHistory(context);
+    }
+  }
+
+  void _onUserBackendLoggedIn() {
+    if (mounted) {
+      CommonUtils.navigateToHomeTab0AndClearHistory(context);
+    }
   }
 
   @override

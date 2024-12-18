@@ -91,7 +91,7 @@ class InnoFileUploadItem {
       var res = await NetworkManager.postRequestSync(
         InnoConfig.mainNetworkConfig.imageFullUpload(),
         dataLoad: {
-          'filename': localPath.split('/').last,
+          'fileName': localPath.split('/').last,
           'base64EncodedFile': base64String,
         },
       );
@@ -143,9 +143,9 @@ class InnoFileUploadItem {
     try {
       var res = await NetworkManager.postRequestSync(url, dataLoad: {
         'base64EncodedContent': base64Chunk,
-        'filename': filename,
+        'fileName': filename,
         'hasMore': hasMore,
-        'chunkedFilename': chunkedFilename,
+        'chunkedFileName': chunkedFilename,
       });
 
       DebugManager.log("chunk upload success");

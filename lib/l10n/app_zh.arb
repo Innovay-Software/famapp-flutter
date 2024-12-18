@@ -53,6 +53,19 @@
   "newNote": "新文档",
   "noNewVersion": "已是最新版",
   "notes": "笔记",
+
+  "numWeeks": "{item}周",
+  "@numWeeks": {
+    "placeholder": {
+      "item": {
+        "type": "num"
+      },
+      "ending": {
+        "type": "String"
+      }
+    }
+  },
+
   "others": "其他",
   "passwordLocker": "Locker密码必须由6个数字组成",
   "passwordTooShort": "密码太短",

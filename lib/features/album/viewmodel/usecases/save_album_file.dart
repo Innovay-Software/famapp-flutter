@@ -1,22 +1,19 @@
-import 'package:either_dart/either.dart';
+import 'package:famapp/features/album/viewmodel/datasources/AlbumFilesRemoteDatasource.dart';
 
-import '../../../../core/config.dart';
-import '../../../../core/errors/data_fetch_error.dart';
-import '../../../../core/utils/network_utils.dart';
-import '../../../../core/utils/use_case_exception_handler.dart';
+import '../../../../core/utils/api_utils.dart';
 import '../../model/album_file.dart';
 
 class SaveAlbumFile {
-  Future<Either<DataFetchError, bool>> call({required AlbumFile albumFile}) async {
-    try {
-      final postData = {'remark': albumFile.remark, 'isPrivate': albumFile.isPrivate};
-      final response = await NetworkManager.postRequestSync(
-        InnoConfig.mainNetworkConfig.saveAlbumFile(albumFile.id),
-        dataLoad: postData,
-      );
-      return const Right(true);
-    } catch (e, stacktrace) {
-      return Left(UseCaseExceptionHandler.defaultHandler(e, stacktrace));
+  Future<ApiResponse> call({required AlbumFile albumFile}) async {
+    final datasource = AlbumFilesRemoteDatasource();
+    final response = await datasource.updateSingleFile(
+      folderFileId: albumFile.id,
+      remarks: albumFile.remark,
+      isPrivate: albumFile.isPrivate,
+    );
+    if (!response.successful) {
+      return response;
     }
+    return response;
   }
 }

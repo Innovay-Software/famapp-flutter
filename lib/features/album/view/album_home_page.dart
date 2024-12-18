@@ -151,7 +151,7 @@ class _AlbumHomePageState extends State<AlbumHomePage> with AutomaticKeepAliveCl
             height: MediaQuery.of(context).size.height,
             color: Colors.black.withOpacity(0.1),
           ),
-          if (currentAlbum.isDummyAlbum())
+          if (currentAlbum.isDummy())
             Padding(
               padding: const EdgeInsets.only(top: 500, left: 100, right: 100),
               child: ExpandedRowWidget(
@@ -160,7 +160,7 @@ class _AlbumHomePageState extends State<AlbumHomePage> with AutomaticKeepAliveCl
                 ],
               ),
             ),
-          if (!currentAlbum.isDummyAlbum())
+          if (!currentAlbum.isDummy())
             SmartRefresher(
               enablePullDown: true,
               enablePullUp: currentAlbum.hasMore,
@@ -220,6 +220,7 @@ class _AlbumHomePageState extends State<AlbumHomePage> with AutomaticKeepAliveCl
                                 [
                                   currentAlbum.metadata['name'],
                                   BabyUtils.getBabyAgeText(
+                                    context,
                                     DateTime.tryParse('${currentAlbum.metadata['birthDate']}') ??
                                         DateTime.now().toLocal(),
                                     DateTime.now().toLocal(),

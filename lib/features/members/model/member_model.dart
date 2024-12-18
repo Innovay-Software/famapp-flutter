@@ -1,5 +1,6 @@
 class Member {
   int id = 0;
+  int familyId = 0;
   String uuid = '';
   String name = '';
   String mobile = '';
@@ -10,6 +11,7 @@ class Member {
 
   Member({
     required this.id,
+    required this.familyId,
     required this.uuid,
     required this.name,
     required this.mobile,
@@ -20,6 +22,7 @@ class Member {
   factory Member.fromJson(Map<String, dynamic> json) {
     return Member(
       id: int.tryParse('${json['id']}') ?? 0,
+      familyId: int.tryParse('${json['family_id']}') ?? 0,
       uuid: '${json['uuid'] ?? ''}',
       name: '${json['name'] ?? ''}',
       mobile: '${json['mobile'] ?? ''}',

@@ -28,6 +28,7 @@ class FileUtils {
         // String base64String = base64.encode(imageBytes);
         // DebugManager.Log('base64 length: ${base64String.length}');
         // var lastModified = await pickedImageList[i].lastModified();
+        DebugManager.log("picked file: ${pickedImages[i].path}");
         pickedFileUploadItems.add(InnoFileUploadItem(pickedImages[i].path, '', false, false, DateTime.now()));
         // {'path': pickedImageList[i].path, 'imageFile': imageFile, 'base64': base64String});
       }

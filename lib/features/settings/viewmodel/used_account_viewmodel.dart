@@ -5,34 +5,26 @@ import 'usecases/save_used_accounts.dart';
 import 'user_viewmodel.dart';
 
 class UsedAccountViewmodel extends InnoViewmodel {
-  static final UsedAccountViewmodel _instance = UsedAccountViewmodel._internal();
+  static final UsedAccountViewmodel _instance = UsedAccountViewmodel._();
   factory UsedAccountViewmodel() => _instance;
-  UsedAccountViewmodel._internal();
+  UsedAccountViewmodel._();
 
   final List<UsedAccount> _usedAccounts = [];
   List<UsedAccount> get usedAccounts => _usedAccounts;
 
   Future<bool> getUsedAccounts() async {
     final useCase = GetUsedAccounts();
-    final response = await useCase.call();
-    if (!validateUseCaseResponse(response)) {
-      return false;
-    }
-
     _usedAccounts.clear();
-    _usedAccounts.addAll(response.right);
+    _usedAccounts.addAll(await useCase.call());
     notifyListeners();
     return true;
   }
 
   Future<bool> saveUsedAccounts() async {
     final useCase = SaveUsedAccounts();
-    final response = await useCase.call(usedAccounts: _usedAccounts);
-    if (!validateUseCaseResponse(response)) {
-      return false;
-    }
+    final successful = await useCase.call(usedAccounts: _usedAccounts);
     notifyListeners();
-    return true;
+    return successful;
   }
 
   Future<bool> addToUsedAccount(UsedAccount usedAccount) async {

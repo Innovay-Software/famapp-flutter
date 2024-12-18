@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../features/livechat/view/widgets/im_video_viewer.dart';
@@ -15,8 +12,6 @@ import '../widgets/expanded_children_row.dart';
 import '../widgets/innovay_text.dart';
 import '../widgets/share_container_widget.dart';
 import 'debug_utils.dart';
-import 'network_utils.dart';
-import 'snack_bar_manager.dart';
 
 class CommonUtils {
   static void setLightStatusText({Color backgroundColor = Colors.transparent}) {
@@ -400,44 +395,6 @@ class CommonUtils {
           ],
         );
       },
-    );
-  }
-
-  static void checkForNewVersion(BuildContext context, String noUpdateMessage) async {
-    var os = Platform.operatingSystem;
-    var packageInfo = InnoGlobalData.packageInfo;
-
-    var res = await NetworkManager.getRequestSync(
-      InnoConfig.mainNetworkConfig.checkForUpdate(os, packageInfo.version),
-    );
-    if (!res['data']['hasUpdate']) {
-      if (noUpdateMessage.isNotEmpty) {
-        SnackBarManager.displayMessage(noUpdateMessage);
-      }
-      return;
-    }
-
-    var url = res['data']['url'].toString();
-    var forceUpdate = res['data']['forceUpdate'];
-    if (!context.mounted) {
-      return;
-    }
-    CommonUtils.displayCustomDialog(
-      context,
-      '',
-      [InnoText(AppLocalizations.of(context)!.updateAvailable)],
-      forceUpdate ? null : Icon(Icons.cancel_outlined, color: InnoConfig.colors.textColorLight7),
-      null,
-      Icon(Icons.check_circle_outline, color: InnoConfig.colors.primaryColor),
-      () {},
-      () async {
-        if (await canLaunchUrl(Uri.parse(url))) {
-          launchUrl(Uri.parse(url));
-        } else if (context.mounted) {
-          return SnackBarManager.displayMessage(AppLocalizations.of(context)!.cannotOpenUrl);
-        }
-      },
-      !forceUpdate,
     );
   }
 
