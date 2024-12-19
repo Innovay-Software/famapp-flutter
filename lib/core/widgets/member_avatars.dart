@@ -36,7 +36,7 @@ class MemberAvatarsBox extends StatelessWidget {
                     ? const InnoAvatarDefault("")
                     : InnoAvatar(
                         url: '${members.first['url']}',
-                        username: '${members.first['username']}',
+                        userName: '${members.first['username']}',
                         size: avatarSize * 2 + 1,
                         borderRadius: 2,
                       ),
@@ -49,7 +49,7 @@ class MemberAvatarsBox extends StatelessWidget {
                 children: members.map((member) {
                   return InnoAvatar(
                     url: member['url'] ?? "",
-                    username: member['username'] ?? "",
+                    userName: member['username'] ?? "",
                     size: avatarSize,
                     borderRadius: avatarSize * 0.2,
                   );

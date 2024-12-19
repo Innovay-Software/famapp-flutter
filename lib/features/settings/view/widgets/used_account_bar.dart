@@ -40,6 +40,7 @@ class UsedAccountBar extends StatelessWidget {
               borderRadius: BorderRadius.circular(4.0),
               child: MemberAvatarWidget(
                 userId: usedAccount.id,
+                avatarUrl: usedAccount.avatar,
                 userName: usedAccount.name,
                 userRole: '',
                 size: 46,

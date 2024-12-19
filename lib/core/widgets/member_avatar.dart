@@ -5,6 +5,7 @@ import 'avatar.dart';
 
 class MemberAvatarWidget extends StatelessWidget {
   final int userId;
+  final String avatarUrl;
   final String userName;
   final String userRole;
   final double size;
@@ -14,6 +15,7 @@ class MemberAvatarWidget extends StatelessWidget {
   const MemberAvatarWidget({
     super.key,
     required this.userId,
+    required this.avatarUrl,
     required this.userName,
     required this.userRole,
     required this.size,
@@ -34,8 +36,8 @@ class MemberAvatarWidget extends StatelessWidget {
         padding: const EdgeInsets.all(1),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(100),
-          child: InnoAvatarUserId(
-            userId,
+          child: InnoAvatar(
+            url: avatarUrl,
             userName: userName,
             size: size,
             clearCache: clearCache,

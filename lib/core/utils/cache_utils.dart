@@ -1,5 +1,3 @@
-import '../config.dart';
-
 class CacheUtils {
   static Map<String, dynamic> cacheMap = {};
 
@@ -18,10 +16,5 @@ class CacheUtils {
   static setAvatar(int userId, String url) {
     if (url.isEmpty) return;
     setCache(_getAvatarKey(userId), url);
-  }
-
-  static String getAvatar(int userId) {
-    var defaultAvatarUrl = InnoConfig.mainNetworkConfig.userAvatar(userId);
-    return getCache(_getAvatarKey(userId), defaultAvatarUrl);
   }
 }

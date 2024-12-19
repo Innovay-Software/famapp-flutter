@@ -119,7 +119,7 @@ class _LivechatHomePageState extends State<LivechatHomePage> with AutomaticKeepA
               borderRadius: BorderRadius.circular(100),
               child: InnoAvatar(
                 url: livechatCurrentUser.avatar,
-                username: livechatCurrentUser.name,
+                userName: livechatCurrentUser.name,
                 size: 40,
               ),
             ),

@@ -29,6 +29,7 @@ class MemberBar extends StatelessWidget {
           padding: const EdgeInsets.only(left: 10, right: 10),
           child: MemberAvatarWidget(
             userId: member.id,
+            avatarUrl: member.avatar,
             userName: member.name,
             userRole: member.role,
             size: 40,

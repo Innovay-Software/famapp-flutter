@@ -1,16 +1,10 @@
 import 'package:famapp/core/utils/dot_env_manager.dart';
 import 'package:flutter/material.dart';
 
-import './networks/main_system_network_config.dart';
 import './networks/user_notifications_network_config.dart';
 import 'color_theme.dart';
 
 class InnoConfig {
-  static MainNetworkConfig mainNetworkConfig = MainNetworkConfig(
-    DotEnvField.DOMAIN_CA.getDotEnvString(''),
-    DotEnvField.DOMAIN_REMOTE.getDotEnvString(''),
-    DotEnvField.API_VERSION.getDotEnvString('v1'),
-  );
   static UserNotificationNetworkConfig userNotificationNetworkConfig = UserNotificationNetworkConfig(
     DotEnvField.DOMAIN_CA.getDotEnvString(''),
     DotEnvField.DOMAIN_REMOTE.getDotEnvString(''),

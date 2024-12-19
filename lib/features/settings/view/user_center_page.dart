@@ -181,7 +181,7 @@ class _UserCenterPageState extends State<UserCenterPage> with AutomaticKeepAlive
                         url: user.avatarUrl,
                         size: 80,
                         borderRadius: 100,
-                        username: user.name,
+                        userName: user.name,
                         clearCache: true,
                       ),
                       if (_currentFileUploadItem != null)

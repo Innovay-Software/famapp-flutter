@@ -1,16 +1,11 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 import '../config.dart';
-import '../global_data.dart';
 import '../utils/common_utils.dart';
 import '../utils/debug_utils.dart';
-import '../utils/network_utils.dart';
 import '../widgets/buttons/bottom_picker_action_button_row.dart';
 import '../widgets/buttons/primary_button.dart';
 import '../widgets/expanded_children_row.dart';
@@ -77,21 +72,7 @@ class _FileViewerPageState extends State<FileViewerPage> {
   }
 
   void _uploadLocalFileAndDisplayShareOptions(String filePath) async {
-    final file = File(filePath);
-    var bytes = await file.readAsBytes();
-    var base64Encoded = base64.encode(bytes);
-
-    InnoGlobalData.switchLoadingOverlay(true);
-    var res = await NetworkManager.postRequestSync(
-      InnoConfig.mainNetworkConfig.fileFullUpload(),
-      dataLoad: {
-        'filename': filePath.split('/').last,
-        'base64EncodedFile': base64Encoded,
-      },
-    );
-
-    InnoGlobalData.switchLoadingOverlay(false);
-    _displayShareOptions(res['data']['url']);
+    DebugManager.unimplemented();
   }
 
   void _displayShareOptions(String fileUrl) {

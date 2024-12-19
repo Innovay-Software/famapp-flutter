@@ -11,7 +11,6 @@ import '../utils/common_utils.dart';
 import '../utils/datetime_util.dart';
 import '../utils/debug_utils.dart';
 import '../utils/file_utils.dart';
-import '../utils/network_utils.dart';
 import 'buttons/primary_button.dart';
 import 'buttons/primary_outline_button.dart';
 import 'buttons/text_button.dart';
@@ -1032,19 +1031,13 @@ class DataEntryFilesBarState extends State<DataEntryFilesBar> {
 
       // found the first file to upload, do the upload request and return;
       var pathComponents = _files[i]['path'].split('/');
-      var res = await NetworkManager.postRequestSync(
-        InnoConfig.mainNetworkConfig.fileFullUpload(),
-        dataLoad: {
-          'filename': pathComponents[pathComponents.length - 1],
-          'base64EncodedFile': _files[i]['base64'],
-        },
-      );
+      DebugManager.unimplemented();
 
       int imageIndex = i;
       setState(() {
         _files[imageIndex]['isUploading'] = false;
         _files[imageIndex]['isUploaded'] = true;
-        _files[imageIndex]['url'] = res['data']['url'];
+        _files[imageIndex]['url'] = '';
         uploadFiles();
       });
       return;

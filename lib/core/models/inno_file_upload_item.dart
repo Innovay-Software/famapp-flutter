@@ -6,7 +6,6 @@ import '../config.dart';
 import '../exceptions/inno_api_exception.dart';
 import '../utils/debug_utils.dart';
 import '../utils/network_utils.dart';
-import '../utils/snack_bar_manager.dart';
 
 class InnoFileUploadItem {
   String localPath;
@@ -84,37 +83,6 @@ class InnoFileUploadItem {
     return uploadedFile;
   }
 
-  Future<void> fullUpload(Function(dynamic) successCallback, {int repeatCount = 0}) async {
-    isUploading = true;
-    var base64String = await getBase64EncodedString();
-    try {
-      var res = await NetworkManager.postRequestSync(
-        InnoConfig.mainNetworkConfig.imageFullUpload(),
-        dataLoad: {
-          'fileName': localPath.split('/').last,
-          'base64EncodedFile': base64String,
-        },
-      );
-
-      isUploading = false;
-      isUploaded = true;
-      remoteUrl = res['data']['document']['fileUrl'];
-      successCallback(res['data']['document']);
-      return;
-    } on InnoApiException catch (e) {
-      DebugManager.error(e.errorMessage());
-    } catch (e) {
-      DebugManager.error(e.toString());
-    }
-
-    isUploading = false;
-    if (repeatCount >= 3) {
-      SnackBarManager.displayMessage('File upload error');
-      return;
-    }
-    fullUpload(successCallback, repeatCount: repeatCount + 1);
-  }
-
   void chunkUpload(
     String filepath,
     String chunkedFilename,
@@ -137,7 +105,8 @@ class InnoFileUploadItem {
     }
     var chunkBytes = bytes.sublist(startingByte, endingByte);
     var base64Chunk = base64.encode(chunkBytes);
-    var url = InnoConfig.mainNetworkConfig.fileBase64ChunkUpload();
+    var url = "";
+    DebugManager.unimplemented();
     DebugManager.log("chunk upload: $url");
 
     try {
@@ -186,7 +155,8 @@ class InnoFileUploadItem {
       }
       var chunkBytes = fileBytes.sublist(startingByte, endingByte);
       var base64Chunk = base64.encode(chunkBytes);
-      var url = InnoConfig.mainNetworkConfig.fileBase64ChunkUpload();
+      var url = "";
+      DebugManager.unimplemented();
       DebugManager.log("chunk upload: $url");
 
       var res = await NetworkManager.postRequestSync(url, dataLoad: {

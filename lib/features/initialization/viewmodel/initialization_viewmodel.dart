@@ -1,12 +1,12 @@
 import 'dart:math';
 
+import 'package:famapp/core/utils/dot_env_manager.dart';
 import 'package:famapp/features/initialization/viewmodel/usercases/check_for_mobile_update.dart';
 import 'package:famapp/features/initialization/viewmodel/usercases/ping_backend.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../api_agent.dart';
 import '../../../core/abstracts/inno_viewmodel.dart';
-import '../../../core/config.dart';
 import '../../../core/global_data.dart';
 import '../../../core/services/inno_secure_storage_service.dart';
 import '../../../core/utils/debug_utils.dart';
@@ -111,9 +111,10 @@ class InitializationViewmodel extends InnoViewmodel {
     ///
     DebugManager.info("AppInitialization Step3: Check for backend server proximity");
     await _serverProximityInitialization();
-    final mainNetworkConfig = InnoConfig.mainNetworkConfig;
     final apiAgent = ApiAgent.init(
-      InnoGlobalData.useRegionRemote ? mainNetworkConfig.regionRemoteBackend : mainNetworkConfig.regionCABackend,
+      InnoGlobalData.useRegionRemote
+          ? DotEnvField.DOMAIN_REMOTE.getDotEnvString('')
+          : DotEnvField.DOMAIN_CA.getDotEnvString(''),
       (String refreshToken, String accessToken) {
         if (refreshToken.isNotEmpty) {
           UserViewmodel().currentUser.setRefreshToken(refreshToken);

@@ -447,11 +447,25 @@ class ApiAgent {
       _bearerAuth.accessToken = accessToken;
     }
 
-    if (!res.containsKey('success')) {
-      res['success'] = false;
-    }
-
     return ApiResponse.fromMap(res['success'] ?? false, res);
+  }
+
+  String folderFileUploadUrl(int folderId) {
+    // ToDo: get url from ApiAgent instead of hard coding it in like this.
+    // Needs to look into openapi generator and see if it supports extract url directly.
+    return '$mainBackend/api/v2/folder-files/chunk-upload-folder-file/$folderId';
+  }
+
+  String displayFolderFileThumbnail(int folderFileId) {
+    // ToDo: get url from ApiAgent instead of hard coding it in like this.
+    // Needs to look into openapi generator and see if it supports extract url directly.
+    return '$mainBackend/folder-file-display/folder-file-thumbnail/$folderFileId';
+  }
+
+  String displayFolderFile(int folderFileId) {
+    // ToDo: get url from ApiAgent instead of hard coding it in like this.
+    // Needs to look into openapi generator and see if it supports extract url directly.
+    return '$mainBackend/folder-file-display/folder-file/$folderFileId';
   }
 }
 

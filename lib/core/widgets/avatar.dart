@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../config.dart';
-import '../utils/cache_utils.dart';
 import 'cached_image.dart';
 import 'innovay_text.dart';
 
@@ -34,13 +33,6 @@ class _InnoAvatarUserIdState extends State<InnoAvatarUserId> {
   @override
   void initState() {
     super.initState();
-    _url = widget.overrideUrl;
-    if (_url == '') {
-      _url = CacheUtils.getAvatar(widget.userId);
-    }
-    if (widget.userName.isNotEmpty) {
-      _userName = widget.userName;
-    }
   }
 
   @override
@@ -48,17 +40,10 @@ class _InnoAvatarUserIdState extends State<InnoAvatarUserId> {
     // DebugManager.log('InnovayAvatar url = $_url');
     return ClipRRect(
       borderRadius: BorderRadius.circular(widget.borderRadius),
-      child: InnovayCachedImage(
-        _url,
-        errorText: _userName[0],
-        errorBackgroundColor: InnoConfig.colors.primaryColorLighter,
-        errorForegroundColor: InnoConfig.colors.primaryColorTextColor,
-        errorTextSize: widget.size * 0.4,
-        errorWidget: InnoAvatarDefault(_userName),
+      child: SizedBox(
         width: widget.size,
         height: widget.size,
-        fit: BoxFit.cover,
-        clearCache: widget.clearCache,
+        child: const InnoText("Deprecated"),
       ),
     );
   }
@@ -66,7 +51,7 @@ class _InnoAvatarUserIdState extends State<InnoAvatarUserId> {
 
 class InnoAvatar extends StatelessWidget {
   final String url;
-  final String username;
+  final String userName;
   final double size;
   final double borderRadius;
   final bool clearCache;
@@ -74,7 +59,7 @@ class InnoAvatar extends StatelessWidget {
   const InnoAvatar({
     super.key,
     this.url = '',
-    this.username = '',
+    this.userName = '',
     this.size = 40,
     this.borderRadius = 4,
     this.clearCache = false,
@@ -86,11 +71,11 @@ class InnoAvatar extends StatelessWidget {
       borderRadius: BorderRadius.circular(borderRadius),
       child: InnovayCachedImage(
         url,
-        errorText: username.isEmpty ? "" : username[0],
+        errorText: userName.isEmpty ? "" : userName[0],
         errorBackgroundColor: InnoConfig.colors.primaryColorLighter,
         errorForegroundColor: InnoConfig.colors.primaryColorTextColor,
         errorTextSize: size * 0.4,
-        errorWidget: InnoAvatarDefault(username),
+        errorWidget: InnoAvatarDefault(userName),
         width: size,
         height: size,
         fit: BoxFit.cover,

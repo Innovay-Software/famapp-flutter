@@ -1,4 +1,5 @@
-import '../../../core/config.dart';
+import 'package:famapp/api_agent.dart';
+
 import '../../../core/global_data.dart';
 import '../../../core/services/cache_service.dart';
 import '../../../core/utils/google_cloud_storage_util.dart';
@@ -69,7 +70,7 @@ class AlbumFile {
 
   String get thumbnailUrl {
     if (thumbnailLocalPath.isNotEmpty) return thumbnailLocalPath;
-    return InnoConfig.mainNetworkConfig.displayFolderFileThumbnail(id);
+    return ApiAgent.instance.displayFolderFileThumbnail(id);
   }
 
   Map<String, String> get fileUrlHeaders {
@@ -82,7 +83,7 @@ class AlbumFile {
 
   String get fileUrl {
     if (fileLocalPath.isNotEmpty) return fileLocalPath;
-    return InnoConfig.mainNetworkConfig.displayFolderFile(id);
+    return ApiAgent.instance.displayFolderFile(id);
   }
 
   String get originalFileUrl {

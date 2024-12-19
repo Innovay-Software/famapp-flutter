@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:background_downloader/background_downloader.dart';
+import 'package:famapp/api_agent.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
@@ -125,7 +126,7 @@ class AlbumFileUploadItemModelV2 {
       tempFile.writeAsBytesSync(chunkBytes);
       _generatedTempFiles.add(tempFilePath);
 
-      final url = InnoConfig.mainNetworkConfig.folderFileChunkUpload(targetAlbumId);
+      final url = ApiAgent.instance.folderFileUploadUrl(targetAlbumId);
       // final url = "https://babyphotos.innovay.dev/api/v1/files/chunk-upload-folder-file/3";
       // final url = InnoConfig.mainNetworkConfig.login();
       // final url = 'localhost';
