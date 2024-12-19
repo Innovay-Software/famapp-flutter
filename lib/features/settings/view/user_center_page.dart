@@ -65,7 +65,6 @@ class _UserCenterPageState extends State<UserCenterPage> with AutomaticKeepAlive
     var packageInfo = InnoGlobalData.packageInfo;
     colorLerp(degree) => Color.lerp(const Color(0xFFC850C0), const Color(0xFF4158D0), degree) ?? Colors.white;
 
-    DebugManager.log("aaaavatar = ${user.name}, ${user.avatarUrl}");
     List<Map> links = [
       {
         'title': AppLocalizations.of(context)!.locker,

@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ui';
 
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/widgets/innovay_text.dart';
@@ -25,7 +27,7 @@ class _LockerHomePasscodeOverlayPageState extends State<LockerHomePasscodeOverla
 
   void _onPasscodeEntered(String enteredPasscode) {
     final user = UserViewmodel().currentUser;
-    bool isValid = user.lockerPasscode == enteredPasscode;
+    bool isValid = user.lockerPasscode == md5.convert(utf8.encode(enteredPasscode)).toString();
     _verificationNotifier.add(isValid);
   }
 
