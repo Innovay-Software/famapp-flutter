@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:famapp/core/utils/debug_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -86,8 +89,10 @@ class CustomBottomNavigationBar extends StatelessWidget {
 class BottomNavigatorClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
-    var initialOffsetY = 25.0;
-    var radius = 800.0;
+    var radiusToSizeMultiplier = 2.0;
+    var radius = size.width * radiusToSizeMultiplier;
+    var temp = sqrt(pow(radius, 2) - pow(size.width / 2, 2));
+    var initialOffsetY = radius - temp;
     var path = Path()
       ..moveTo(0, initialOffsetY)
       ..arcToPoint(
